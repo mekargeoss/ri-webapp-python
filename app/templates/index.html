@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Start Page</h1>
+{% if error %}
+  <div style="
+      background:#fdecea;
+      border:1px solid #f5c2c7;
+      color:#842029;
+      padding:0.75rem 1rem;
+      border-radius:8px;
+      margin-bottom:1rem;
+    ">
+    <strong>Error:</strong> {{ error }}
+  </div>
+{% endif %}
+
+{% if user %}
+  <p>Logged in as <strong>{{ user.get('name') or user.get('email') or user.get('sub') }}</strong></p>
+  <pre>{{ access_token | tojson(indent=2) }}</pre>
+  <p><a class="btn" href="/me">View Claims</a> <a class="btn" href="/logout">Logout</a></p>
+{% elif access_token %}
+  <p class="muted">You are authenticated but no User claims are returned.</p>
+  <pre>{{ access_token | tojson(indent=2) }}</pre>
+  <p><a class="btn" href="/logout">Logout</a></p>
+{% else %}
+  <p class="muted">You are not authenticated.</p>
+  <div class="row">
+    <div>
+      <label for="claims_locales">Claims Locale</label>
+      <input id="claims_locales" type="text" value="en" />
+    </div>
+    <div>
+      <label for="ui_locales">UI Locale</label>
+      <input id="ui_locales" type="text" value="en" />
+    </div>
+    <div>
+      <a id="login_btn" class="btn" href="/login">Login</a>
+    </div>
+  </div>
+
+{% endif %}
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+  const claimsInput = document.getElementById("claims_locales");
+  const uiInput = document.getElementById("ui_locales");
+  const loginBtn = document.getElementById("login_btn");
+
+  if (claimsInput && uiInput && loginBtn) {
+    function updateLoginUrl() {
+      const claims = claimsInput.value || "en";
+      const ui = uiInput.value || "en";
+      const params = new URLSearchParams({
+        claims_locales: claims,
+        ui_locales: ui
+      });
+      loginBtn.href = "/login?" + params.toString();
+    }
+
+    claimsInput.addEventListener("input", updateLoginUrl);
+    uiInput.addEventListener("input", updateLoginUrl);
+    updateLoginUrl();
+  }
+</script>
+{% endblock %}
