@@ -1,3 +1,6 @@
+# 2026 Mekarge OSS and Maintainers
+# Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
